@@ -7,8 +7,8 @@ app.use(bodyParser.json());
 let users = [];
 
 function validateRegisterParams(req, res, next) {
-    const { id, name, lastname, email, password } = req.body;
-    if (id && name && lastname && email && password) {
+    const { name, lastname, email, password } = req.body;
+    if (name && lastname && email && password) {
         next();
     } else {
         res.status(400).json({ error: "invalidate params" });
@@ -31,16 +31,16 @@ app.get('/users', (req, res) => {
 });
 
 app.post('/register', validateRegisterParams, (req, res) => {
-    users.push(req.body);
+    users.push({ id: (users.length + 1), ...req.body });
     res.json({ msg: 'user added' });
 });
 
 app.patch('/editUser/:email', validateUserEmail, (req, res) => {
     let index = req.body.index;
-    users[index].id = req.body.id;
     users[index].name = req.body.name;
     users[index].lastname = req.body.lastname;
     users[index].password = req.body.password;
+    users[index].isAutenticated = req.body.isAutenticated;
 
     res.json({ msg: 'user updated' });
 });
